@@ -15,8 +15,51 @@
   flex: 1;
 }
 
+.compteur-recherche,
+.resultat-recherche,
+.aucun-resultat {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+.compteur-recherche {
+  margin: 0 0 6px 0;
+}
+
+.resultat-recherche {
+  margin: 0 0 16px 0;
+}
+
+.aucun-resultat {
+  background-color: #ffffff;
+  border: 2px dashed #dcdde1;
+  border-radius: 8px;
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+}
+
 @media (max-width: 600px) {
   .contenu {
     padding: 12px;
+  }
+
+  .ligne-bus {
+    padding: 10px 12px;
+  }
+
+  .ligne-numero {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    margin-right: 12px;
+  }
+
+  .recherche {
+    flex-direction: column;
+  }
+
+  .recherche-effacer {
+    min-height: 44px;
   }
 }

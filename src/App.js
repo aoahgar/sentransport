@@ -1,9 +1,16 @@
+import { useState } from 'react';
 import './App.css';
 import Header from './Header';
-import ListeLignes from './ListeLignes';
+import Recherche from './Recherche';
+import LigneBus from './LigneBus';
+import DetailLigne from './DetailLigne';
 import Footer from './Footer';
 
 function App() {
+  const [recherche, setRecherche] = useState('');
+  const [ligneSelectionnee, setLigneSelectionnee] = useState(null);
+  const [nombreRecherches, setNombreRecherches] = useState(0);
+
   const lignes = [
     {
       id: 1,
@@ -11,6 +18,16 @@ function App() {
       depart: 'Parcelles Assainies',
       arrivee: 'Plateau',
       arrets: 14,
+      listeArrets: [
+        'Parcelles U14',
+        'Parcelles U10',
+        'Camberene',
+        "Patte d'Oie",
+        'Grand Dakar',
+        'Colobane',
+        'Ponty',
+        'Plateau',
+      ],
     },
     {
       id: 2,
@@ -18,6 +35,16 @@ function App() {
       depart: 'Guediawaye',
       arrivee: 'Place Obe',
       arrets: 18,
+      listeArrets: [
+        'Guediawaye',
+        'Pikine',
+        'Thiaroye',
+        'Keur Massar',
+        'Grand Yoff',
+        'Parcelles',
+        'Liberte 6',
+        'Place Obe',
+      ],
     },
     {
       id: 3,
@@ -25,6 +52,14 @@ function App() {
       depart: 'Pikine',
       arrivee: 'Medina',
       arrets: 12,
+      listeArrets: [
+        'Pikine Centre',
+        'Thiaroye Gare',
+        'Hann',
+        'Colobane',
+        'Fass',
+        'Medina',
+      ],
     },
     {
       id: 4,
@@ -32,6 +67,14 @@ function App() {
       depart: 'Ouakam',
       arrivee: 'Grand Dakar',
       arrets: 10,
+      listeArrets: [
+        'Ouakam Village',
+        'Mermoz',
+        'Fann',
+        'Point E',
+        'Liberte 5',
+        'Grand Dakar',
+      ],
     },
     {
       id: 5,
@@ -39,6 +82,14 @@ function App() {
       depart: 'Almadies',
       arrivee: 'Colobane',
       arrets: 16,
+      listeArrets: [
+        'Almadies',
+        'Ngor',
+        'Yoff',
+        'Ouest Foire',
+        'Liberte 6',
+        'Colobane',
+      ],
     },
     {
       id: 6,
@@ -46,14 +97,85 @@ function App() {
       depart: 'Yoff',
       arrivee: 'Sandaga',
       arrets: 11,
+      listeArrets: [
+        'Yoff Village',
+        'Aeroport LSS',
+        'Parcelles U17',
+        'Grand Yoff',
+        'HLM',
+        'Sandaga',
+      ],
     },
   ];
+
+  const lignesFiltrees = lignes.filter(
+    (ligne) =>
+      ligne.depart.toLowerCase().includes(recherche.toLowerCase()) ||
+      ligne.arrivee.toLowerCase().includes(recherche.toLowerCase()) ||
+      ligne.numero.includes(recherche)
+  );
+
+  function handleRechercheChange(nouvelleValeur) {
+    setRecherche(nouvelleValeur);
+    setNombreRecherches((total) => total + 1);
+  }
+
+  function handleEffacerRecherche() {
+    if (recherche !== '') {
+      setNombreRecherches((total) => total + 1);
+    }
+
+    setRecherche('');
+    setLigneSelectionnee(null);
+  }
+
+  function handleClickLigne(ligne) {
+    if (ligneSelectionnee && ligneSelectionnee.id === ligne.id) {
+      setLigneSelectionnee(null);
+    } else {
+      setLigneSelectionnee(ligne);
+    }
+  }
 
   return (
     <div className="App">
       <Header />
       <main className="contenu">
-        <ListeLignes lignes={lignes} />
+        <Recherche
+          valeur={recherche}
+          onChange={handleRechercheChange}
+          onEffacer={handleEffacerRecherche}
+        />
+
+        <p className="compteur-recherche">
+          Vous avez effectué {nombreRecherches} recherche
+          {nombreRecherches > 1 ? 's' : ''}
+        </p>
+
+        <p className="resultat-recherche">
+          {lignesFiltrees.length} ligne{lignesFiltrees.length > 1 ? 's' : ''}{' '}
+          trouvée{lignesFiltrees.length > 1 ? 's' : ''}
+        </p>
+
+        {lignesFiltrees.length === 0 ? (
+          <p className="aucun-resultat">Aucune ligne trouvée</p>
+        ) : (
+          lignesFiltrees.map((ligne) => (
+            <LigneBus
+              key={ligne.id}
+              numero={ligne.numero}
+              depart={ligne.depart}
+              arrivee={ligne.arrivee}
+              arrets={ligne.arrets}
+              estSelectionnee={
+                ligneSelectionnee && ligneSelectionnee.id === ligne.id
+              }
+              onClick={() => handleClickLigne(ligne)}
+            />
+          ))
+        )}
+
+        {ligneSelectionnee && <DetailLigne ligne={ligneSelectionnee} />}
       </main>
       <Footer />
     </div>
